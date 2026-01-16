@@ -69,6 +69,7 @@ struct connection {
 
 	/* HTTP request path */
 	int have_path;
+	size_t request_path_len;
 	char request_path[BUFSIZ];
 	enum resource_type res_type;
 	enum connection_state state;
