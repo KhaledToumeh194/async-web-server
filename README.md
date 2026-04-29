@@ -1,4 +1,4 @@
-# Asynchronous Web Server
+# Async HTTP Web Server
 
 A high-performance asynchronous HTTP web server implemented in C, built as part of the Operating Systems course at POLITEHNICA Bucharest.
 
@@ -15,7 +15,14 @@ This server handles thousands of concurrent HTTP connections without blocking, u
 - **Full connection state machine** — Manages the entire lifecycle: receive → parse → respond → teardown
 - **Non-blocking sockets** — All I/O operations are non-blocking with proper `EAGAIN` handling
 
+## Architecture
+
+- New connection → `accept()` → registered with `epoll`
+- `EPOLLIN` → receive data → parse HTTP header → open requested file
+- Static files → served via `sendfile()` (zero-copy)
+- Dynamic files → read asynchronously via `libaio` + `eventfd` notification
+- `EPOLLOUT` → send HTTP header → send file data → close connection
+
 ## Technologies
 
 - C, epoll, libaio, sendfile, eventfd, POSIX sockets, HTTP parser
-
